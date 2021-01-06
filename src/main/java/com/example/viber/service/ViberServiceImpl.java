@@ -93,7 +93,7 @@ public class ViberServiceImpl implements ViberService {
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
         } else
         if (EventTypes.subscribed.equals(message.getEvent())) {
-            receiverService.addReceiver(new Receiver("newGLEK", "offHIM"));
+            receiverService.addReceiver(new Receiver("aaaaa", "bbbbb"));
             receiverService.addReceiver(new Receiver(message.getSender().getId()));
 
             return sentMessage(message.getSender().getId(), "Subscribed");
