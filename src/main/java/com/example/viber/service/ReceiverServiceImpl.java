@@ -6,9 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional(readOnly = true)
 public class ReceiverServiceImpl implements ReceiverService {
 
 
@@ -19,13 +22,13 @@ public class ReceiverServiceImpl implements ReceiverService {
         this.receiverRepository = receiverRepository;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
     @Override
     public void addReceiver(Receiver receiver) {
         receiverRepository.save(receiver);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE, propagation = Propagation.REQUIRES_NEW)
     @Override
     public void removeReceiver(String id) {
         receiverRepository.deleteById(id);
