@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @ComponentScan("com.example.viber.*")
-public class ViberApplication implements CommandLineRunner {
+public class ViberApplication {
 
 	@Autowired
 	ReceiverRepository receiverRepository;
@@ -26,9 +26,4 @@ public class ViberApplication implements CommandLineRunner {
 		return new RestTemplate();
 	}
 
-	@Override
-	public void run(String... args) throws Exception {
-		Receiver receiver = new Receiver("2", "Olaf", "sdgfh@msfs");
-		receiverRepository.save(receiver);
-	}
 }
