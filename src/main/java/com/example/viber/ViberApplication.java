@@ -1,9 +1,5 @@
 package com.example.viber;
 
-import com.example.viber.model.Receiver;
-import com.example.viber.repository.ReceiverRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,9 +9,6 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootApplication
 @ComponentScan("com.example.viber.*")
 public class ViberApplication {
-
-	@Autowired
-	ReceiverRepository receiverRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(ViberApplication.class, args);
