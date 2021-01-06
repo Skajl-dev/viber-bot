@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @ComponentScan("com.example.viber.*")
-public class ViberApplication {
+public class ViberApplication  {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ViberApplication.class, args);
@@ -18,5 +18,6 @@ public class ViberApplication {
 	public RestTemplate getRestTemplate() {
 		return new RestTemplate();
 	}
+
 
 }

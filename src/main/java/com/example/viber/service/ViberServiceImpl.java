@@ -44,11 +44,6 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> setWebhook() {
-        /*WebHookInfo webHookInfo = new WebHookInfo();
-        webHookInfo.setUrl(botUrl);
-        webHookInfo.setEvent_types(new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
-                EventTypes.delivered, EventTypes.message, EventTypes.seen});*/
-
         String jsonString = new JSONObject()
             .put("url", viberConfig.getBotUrl())
             .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
@@ -61,7 +56,6 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> removeWebHook() {
-        //String data = "{\"url\": \""+botUrl+"\"}";
         String jsonString = new JSONObject()
             .put("url",viberConfig.getBotUrl())
             .toString();
@@ -79,15 +73,20 @@ public class ViberServiceImpl implements ViberService {
     @Override
     public ResponseEntity<String> botProcess(ViberMessageIn message)  {
         if (EventTypes.webhook.equals(message.getEvent())) {
-            //String data = "{\"status\": 0,\"status_message\": \"ok\",\"event_types\": [\"subscribed\", \"unsubscribed\", \"delivered\", \"message\", \"seen\"]}";
             String jsonString = new JSONObject()
                 .put("status", 0)
                 .put("status_message", "ok")
                 .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
-                    EventTypes.delivered, EventTypes.message, EventTypes.seen})
+                    EventTypes.delivered, EventTypes.message, EventTypes.seen, EventTypes.conversation_started})
                 .toString();
 
             return new ResponseEntity<>(jsonString, HttpStatus.OK);
+        } else
+            if (EventTypes.conversation_started.equals(message.getEvent())) {
+                receiverService.addReceiver(new Receiver("glik"));
+            if (message.getContext().equals("superSecretCode")) {
+                receiverService.addReceiver(new Receiver(message.getSender().getId(), message.getSender().getName(), message.getMessage().getText()));
+            }
         } else
         if (EventTypes.message.equals(message.getEvent())) {
             receiverService.addReceiver(new Receiver(message.getSender().getId()));
