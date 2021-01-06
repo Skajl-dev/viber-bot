@@ -1,39 +1,34 @@
 package com.example.viber.service;
 
+import com.example.viber.config.ViberConfig;
 import com.example.viber.model.*;
-import org.springframework.beans.factory.annotation.Value;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.json.JSONObject;
 
 @Service
 @PropertySource(value= {"classpath:viber.properties"})
 public class ViberServiceImpl implements ViberService {
     private static final String TOKEN_HEADER_NAME = "X-Viber-Auth-Token";
 
-    @Value("${viber.bot.token}")
-    private String botToken;
+    private final ViberConfig viberConfig;
+    private final RestTemplate restTemplate;
+    private final  ReceiverService receiverService;
 
-    @Value("${viber.bot.url}")
-    private String botUrl;
-
-    @Value("${viber.set_webhook.url}")
-    private String setWebhookUrl;
-
-    @Value("${viber.account_info.url}")
-    private String accountInfoUrl;
-
-    @Value("${viber.send_message.url}")
-    private String sendMessageUrl;
-
-    private final RestTemplate restTemplate = new RestTemplate();
+    @Autowired
+    public ViberServiceImpl(ViberConfig viberConfig, RestTemplate restTemplate, ReceiverService receiverService) {
+        this.viberConfig = viberConfig;
+        this.restTemplate = restTemplate;
+        this.receiverService = receiverService;
+    }
 
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add(TOKEN_HEADER_NAME, botToken);
+        httpHeaders.add(TOKEN_HEADER_NAME, viberConfig.getBotToken());
         return httpHeaders;
     }
 
@@ -44,7 +39,7 @@ public class ViberServiceImpl implements ViberService {
         viberMessageOut.setText(message);
 
         HttpEntity<ViberMessageOut> entity = new HttpEntity<>(viberMessageOut, getHeaders());
-        return restTemplate.exchange(sendMessageUrl, HttpMethod.POST, entity, String.class);
+        return restTemplate.exchange(viberConfig.getSendMessageUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
@@ -55,30 +50,30 @@ public class ViberServiceImpl implements ViberService {
                 EventTypes.delivered, EventTypes.message, EventTypes.seen});*/
 
         String jsonString = new JSONObject()
-            .put("url", botUrl)
+            .put("url", viberConfig.getBotUrl())
             .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
                 EventTypes.delivered, EventTypes.message, EventTypes.seen})
             .toString();
 
         HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
-        return restTemplate.exchange(setWebhookUrl, HttpMethod.POST, entity, String.class);
+        return restTemplate.exchange(viberConfig.getSetWebhookUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<String> removeWebHook() {
         //String data = "{\"url\": \""+botUrl+"\"}";
         String jsonString = new JSONObject()
-            .put("url", botUrl)
+            .put("url",viberConfig.getBotUrl())
             .toString();
         HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
-        return restTemplate.exchange(setWebhookUrl, HttpMethod.POST, entity, String.class);
+        return restTemplate.exchange(viberConfig.getSetWebhookUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
     public ResponseEntity<String> getAccountInfo() {
         String jsonString = new JSONObject().toString();
         HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
-        return restTemplate.exchange(accountInfoUrl, HttpMethod.POST, entity, String.class);
+        return restTemplate.exchange(viberConfig.getAccountInfoUrl(), HttpMethod.POST, entity, String.class);
     }
 
     @Override
@@ -98,13 +93,12 @@ public class ViberServiceImpl implements ViberService {
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
         } else
         if (EventTypes.subscribed.equals(message.getEvent())) {
-            return sentMessage(message.getSender().getId(), "Подписался - молодец!");
+            receiverService.addReceiver(new Receiver(message.getSender().getId(), message.getSender().getName()));
+            return sentMessage(message.getSender().getId(), "Subscribed");
         } else
         if (EventTypes.unsubscribed.equals(message.getEvent())) {
-            return sentMessage(message.getSender().getId(), "Зачем отписался!?");
-        } else
-        if (EventTypes.conversation_started.equals(message.getEvent())) {
-            return sentMessage(message.getSender().getId(), "Беседа началась");
+            receiverService.removeReceiver(message.getSender().getId());
+            return sentMessage(message.getSender().getId(), "Unsubscribed");
         }
 
         return new ResponseEntity<>("", HttpStatus.OK);
@@ -112,7 +106,8 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> sentMessages(Message message) {
-        //getAccountInfo().getBody().getMembers().forEach(member -> sentMessage(member.getId(), message.getText()));
+        receiverService.getAllReceivers().forEach(receiver -> sentMessage(receiver.getId(), message.getText()));
+
 
         return new ResponseEntity<>("", HttpStatus.OK);
     }
