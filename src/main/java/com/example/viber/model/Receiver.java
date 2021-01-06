@@ -16,6 +16,10 @@ public class Receiver {
         this.name = name;
     }
 
+    public Receiver(String id) {
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }
