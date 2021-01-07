@@ -34,7 +34,7 @@ public class ViberBotController {
 
     @PostMapping(value = "/bot", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE,
         produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<String> botProcess(@RequestBody ViberMessageIn message) throws JSONException {
+    public ResponseEntity<String> botProcess(@RequestBody ViberMessageIn message) {
         return viberService.botProcess(message);
     }
 

@@ -87,9 +87,20 @@ public class ViberServiceImpl implements ViberService {
                 .toString();
 
             return new ResponseEntity<>(jsonString, HttpStatus.OK);
-        } else if (EventTypes.conversation_started.equals(message.getEvent()))
-        {
-
+        }
+        else if (EventTypes.conversation_started.equals(message.getEvent())) {
+            Sender sender = new Sender();
+            sender.setName("ne");
+            sender.setAvatar("http://avatar.example.com");
+            String jsonString = new JSONObject()
+                .put("sender", sender)
+                .put("tracking_data", "tracking_data")
+                .put("type", "picture")
+                .put("text", "welcome to our bot. press send to register")
+                .put("media", "https://pbs.twimg.com/profile_images/888823070181478401/kxCHqY19.jpg")
+                .put("thumbnail", "http://www.images.com/thumb.jpg")
+                .toString();
+            return new ResponseEntity<>(jsonString, HttpStatus.OK);
         }
         else
         if (EventTypes.message.equals(message.getEvent())) {
@@ -99,8 +110,6 @@ public class ViberServiceImpl implements ViberService {
         } else
         if (EventTypes.subscribed.equals(message.getEvent())) {
             receiverService.addReceiver(new Receiver("aaaaa", "bbbbb"));
-
-
             return sentMessage(message.getSender().getId(), "Subscribed");
         } else
         if (EventTypes.unsubscribed.equals(message.getEvent())) {
