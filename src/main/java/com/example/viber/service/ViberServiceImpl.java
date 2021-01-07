@@ -44,6 +44,11 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> setWebhook() {
+        /*WebHookInfo webHookInfo = new WebHookInfo();
+        webHookInfo.setUrl(botUrl);
+        webHookInfo.setEvent_types(new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
+                EventTypes.delivered, EventTypes.message, EventTypes.seen});*/
+
         String jsonString = new JSONObject()
             .put("url", viberConfig.getBotUrl())
             .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
@@ -56,6 +61,7 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> removeWebHook() {
+        //String data = "{\"url\": \""+botUrl+"\"}";
         String jsonString = new JSONObject()
             .put("url",viberConfig.getBotUrl())
             .toString();
