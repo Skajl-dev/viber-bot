@@ -17,7 +17,7 @@ public class NotificationService {
         this.receiverService = receiverService;
     }
 
-    @Scheduled(fixedRate = 12000)
+    @Scheduled(fixedRate = 100000000)
     public void sendNotificationMessage() {
         Thread thread = new Send(receiverService.getAllReceivers());
         thread.start();
