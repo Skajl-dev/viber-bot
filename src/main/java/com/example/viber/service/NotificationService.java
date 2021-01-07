@@ -4,7 +4,9 @@ import com.example.viber.model.Receiver;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 
+@Component
 public class NotificationService {
     private final ViberService viberService;
     private final ReceiverService receiverService;

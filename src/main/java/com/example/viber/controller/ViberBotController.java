@@ -23,12 +23,12 @@ public class ViberBotController {
     }
 
     @GetMapping(value = "/setwebhook", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<String> setWebHook() throws JSONException {
+    public ResponseEntity<String> setWebHook() {
         return viberService.setWebhook();
     }
 
     @GetMapping(value = "/removewebhook", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResponseEntity<String> removeWebHook() throws JSONException {
+    public ResponseEntity<String> removeWebHook() {
         return viberService.removeWebHook();
     }
 
