@@ -52,7 +52,7 @@ public class ViberServiceImpl implements ViberService {
         String jsonString = new JSONObject()
             .put("url", viberConfig.getBotUrl())
             .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
-                EventTypes.delivered, EventTypes.message, EventTypes.seen})
+                EventTypes.delivered, EventTypes.message, EventTypes.seen, EventTypes.conversation_started})
             .toString();
 
         HttpEntity<String> entity = new HttpEntity<>(jsonString, getHeaders());
