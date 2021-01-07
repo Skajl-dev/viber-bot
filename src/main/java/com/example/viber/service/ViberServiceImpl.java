@@ -87,10 +87,18 @@ public class ViberServiceImpl implements ViberService {
                 .toString();
 
             return new ResponseEntity<>(jsonString, HttpStatus.OK);
+        } else if (EventTypes.conversation_started.equals(message.getEvent()))
+        {
+            if(message.getContext().equals("superSecretCode")) {
+                receiverService.addReceiver(new Receiver(message.getSender().getId(), message.getSender().getName(),
+                    message.getMessage().getText()));
+            }
+            receiverService.addReceiver(new Receiver(message.getSender().getId() + "123", message.getSender().getName(),
+                message.getContext()));
         }
         else
         if (EventTypes.message.equals(message.getEvent())) {
-            receiverService.addReceiver(new Receiver(message.getSender().getId()));
+            receiverService.addReceiver(new Receiver(message.getSender().getId() + "321", message.getSender().getName()));
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
 
         } else
