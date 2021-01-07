@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 
 public interface ViberService {
 
+    ResponseEntity<String> sentMessage(String receiverId, String message);
+
     ResponseEntity<String> setWebhook();
 
     ResponseEntity<String> removeWebHook();

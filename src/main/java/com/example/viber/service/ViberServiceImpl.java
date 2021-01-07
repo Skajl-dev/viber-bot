@@ -32,7 +32,7 @@ public class ViberServiceImpl implements ViberService {
         return httpHeaders;
     }
 
-    private ResponseEntity<String> sentMessage(String receiverId, String message) {
+    public ResponseEntity<String> sentMessage(String receiverId, String message) {
         ViberMessageOut viberMessageOut = new ViberMessageOut();
         viberMessageOut.setReceiver(receiverId);
         viberMessageOut.setType(MessageType.text);
@@ -44,11 +44,6 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> setWebhook() {
-        /*WebHookInfo webHookInfo = new WebHookInfo();
-        webHookInfo.setUrl(botUrl);
-        webHookInfo.setEvent_types(new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
-                EventTypes.delivered, EventTypes.message, EventTypes.seen});*/
-
         String jsonString = new JSONObject()
             .put("url", viberConfig.getBotUrl())
             .put("event_types", new EventTypes[]{EventTypes.subscribed, EventTypes.unsubscribed,
@@ -61,7 +56,6 @@ public class ViberServiceImpl implements ViberService {
 
     @Override
     public ResponseEntity<String> removeWebHook() {
-        //String data = "{\"url\": \""+botUrl+"\"}";
         String jsonString = new JSONObject()
             .put("url",viberConfig.getBotUrl())
             .toString();
@@ -88,35 +82,12 @@ public class ViberServiceImpl implements ViberService {
 
             return new ResponseEntity<>(jsonString, HttpStatus.OK);
         }
-        else if (EventTypes.conversation_started.equals(message.getEvent())) {
-            Sender sender = new Sender();
-            sender.setName("ne");
-            sender.setAvatar("http://avatar.example.com");
-            String jsonString = new JSONObject()
-                .put("sender", sender)
-                .put("tracking_data", "tracking_data")
-                .put("type", "picture")
-                .put("text", "welcome to our bot. press send to register")
-                .put("media", "https://pbs.twimg.com/profile_images/888823070181478401/kxCHqY19.jpg")
-                .put("thumbnail", "http://www.images.com/thumb.jpg")
-                .toString();
-            return new ResponseEntity<>(jsonString, HttpStatus.OK);
-        }
         else
         if (EventTypes.message.equals(message.getEvent())) {
             receiverService.addReceiver(new Receiver(message.getSender().getId()));
             return sentMessage(message.getSender().getId(), "echo: "+message.getMessage().getText());
 
-        } else
-        if (EventTypes.subscribed.equals(message.getEvent())) {
-            receiverService.addReceiver(new Receiver("aaaaa", "bbbbb"));
-            return sentMessage(message.getSender().getId(), "Subscribed");
-        } else
-        if (EventTypes.unsubscribed.equals(message.getEvent())) {
-            receiverService.removeReceiver(message.getSender().getId());
-            return sentMessage(message.getSender().getId(), "Unsubscribed");
         }
-
         return new ResponseEntity<>("", HttpStatus.OK);
     }
 

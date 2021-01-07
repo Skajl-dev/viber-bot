@@ -9,6 +9,11 @@ public class Message {
 
     public Message() {}
 
+    public Message(MessageType type, String text) {
+        this.type = type;
+        this.text = text;
+    }
+
     public MessageType getType() {
         return type;
     }
